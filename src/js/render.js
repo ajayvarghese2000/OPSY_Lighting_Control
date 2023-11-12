@@ -2,6 +2,7 @@ const { SerialPort } = require('serialport')
 const fs = require('fs');
 const alertify = require('alertifyjs');
 
+var currentDirectory = __dirname;
 
 var TransmissionCOM = null
 var ReflectionCOM = null
@@ -145,14 +146,14 @@ function importCassette(type)
     var cassette = document.getElementsByClassName("OpsyNormal");
 
     // read the svg file into memory
-    var svgString = fs.readFileSync("./src/assets/images/OPSY_Normal.svg", "utf8");
+    var svgString = fs.readFileSync(`${currentDirectory}/assets/images/OPSY_Normal.svg`, "utf8");
 
     // import the cassette file directly into the html
     cassette[0].innerHTML = svgString;
 
     // import the reflection image into the html
     var reflection = document.getElementsByClassName("Reflection_Button");
-    reflection[0].innerHTML = fs.readFileSync("./src/assets/images/reflection.svg", "utf8");
+    reflection[0].innerHTML = fs.readFileSync(`${currentDirectory}/assets/images/reflection.svg`, "utf8");
 
     hideObjectiveLightBeam()
 }
