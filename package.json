@@ -1,5 +1,5 @@
 {
-  "name": "electron_lights",
+  "name": "opsy_lights_control",
   "version": "1.0.0",
   "description": "A GUI to control the COM port lights on the Dx000 Systems",
   "main": "./src/js/main.js",
