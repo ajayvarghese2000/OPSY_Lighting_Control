@@ -1,0 +1,203 @@
+@import "~animate.css/animate.css";
+
+body
+{
+    margin: 0px;
+    overflow: hidden;
+}
+
+.LightingControl
+{
+    width: 389px;
+    height: 650px; 
+    position: relative; 
+    background: #1F1F1F
+}
+
+.TopBar
+{
+    width: 389px; 
+    height: 50px; 
+    left: 0px; 
+    top: 0px; 
+    position: absolute
+}
+
+.Logo
+{
+    width: 100px; 
+    height: 30px; 
+    left: 269px; 
+    top: 10px; 
+    position: absolute
+}
+
+.Title
+{
+    left: 20px; 
+    top: 11px; 
+    position: absolute; 
+    color: white; 
+    font-size: 23px; 
+    font-family: Inter; 
+    font-weight: 700; 
+    text-transform: uppercase; 
+    word-wrap: break-word;
+}
+
+.Main
+{
+    width: 389px; 
+    height: 600px; 
+    left: 0px; 
+    top: 50px; 
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url("../assets/images/opsydia_logo_ani.svg");
+    background-repeat: no-repeat;
+    background-size: 750px;
+}
+
+.OpsyNormal
+{
+    display: flex;
+    align-items: center;
+    width: 171px; 
+    height: 521px; 
+    left: 109px; 
+    top: 40px; 
+    position: absolute;
+    visibility: hidden;
+    background: #1F1F1F
+}
+
+.Reflection_Button{
+    z-index: 5;
+    width: 72px;
+    height: 70px;
+    position: absolute;
+    top: 39px;
+    left: 21px;
+    visibility: hidden;
+}
+
+.setupbox
+{
+    width: 300px; 
+    height: 280px; 
+    position: relative; 
+    background: #2B2B2B; 
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25); 
+    border-radius: 18px; 
+    display: flex;
+    overflow: hidden; 
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.options
+{
+    padding-top: 3px; 
+    padding-bottom: 3px; 
+    justify-content: flex-start; 
+    align-items: center; 
+    display: inline-flex;
+}
+
+.options div
+{
+    color: white; 
+    font-family: Inter; 
+    font-weight: 400; 
+    word-wrap: break-word;
+}
+
+.input-group 
+{
+    position: relative;
+    width: 229px;
+}
+   
+.input 
+{
+    border: solid 1.5px #9e9e9e;
+    border-radius: 1rem;
+    background: none;
+    padding: 1rem;
+    font-size: 1rem;
+    color: #f5f5f5;
+    transition: border 150ms cubic-bezier(0.4,0,0.2,1);
+}
+
+#cstyle
+{
+    border: 1.5px solid #66b069;
+    width: 229px;
+}
+   
+.user-label 
+{
+    position: absolute;
+    left: 15px;
+    color: #e8e8e8;
+    pointer-events: none;
+    transform: translateY(1rem);
+    transition: 150ms cubic-bezier(0.4,0,0.2,1);
+}
+   
+.input:focus, input:valid 
+{
+    outline: none;
+    border: 1.5px solid #66b069;
+}
+   
+.input:focus ~ label, input:valid ~ label 
+{
+    transform: translateY(-50%) scale(0.8);
+    background-color: #212121;
+    padding: 0.2em;
+
+}
+
+.button_div
+{
+    padding-top: 3px; 
+    padding-bottom: 3px; 
+
+    align-items: center; 
+    display: inline-flex;
+}
+
+.btn 
+{
+    width: 130px;
+    height: 40px;
+    font-size: 1.1em;
+    cursor: pointer;
+    background-color: #171717;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    transition: all .4s;
+    position: relative;
+}
+
+.btn:hover 
+{
+    border-radius: 5px;
+    transform: translateY(-10px);
+    box-shadow: 0 7px 0 -2px #66b069,
+        0 15px 0 -4px #86c188,
+        0 16px 10px -3px #c6e2c7;
+}
+
+.btn:active {
+    transition: all 0.2s;
+    transform: translateY(-5px);
+    box-shadow: 0 2px 0 -2px #66b069,
+        0 8px 0 -4px #86c188,
+        0 12px 10px -3px #c6e2c7;
+}

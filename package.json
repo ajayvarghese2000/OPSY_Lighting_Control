@@ -1,0 +1,31 @@
+{
+  "name": "electron_lights",
+  "version": "1.0.0",
+  "description": "A GUI to control the COM port lights on the Dx000 Systems",
+  "main": "./src/js/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "author": "Ajay Varghese",
+  "license": "ISC",
+  "devDependencies": {
+    "@electron-forge/cli": "^6.4.2",
+    "@electron-forge/maker-deb": "^6.4.2",
+    "@electron-forge/maker-rpm": "^6.4.2",
+    "@electron-forge/maker-squirrel": "^6.4.2",
+    "@electron-forge/maker-zip": "^6.4.2",
+    "@electron-forge/plugin-auto-unpack-natives": "^6.4.2",
+    "electron": "^27.0.4"
+  },
+  "dependencies": {
+    "alertifyjs": "^1.13.1",
+    "animate.css": "^4.1.1",
+    "bootstrap": "^5.3.2",
+    "electron-squirrel-startup": "^1.0.0",
+    "fs": "^0.0.1-security",
+    "serialport": "^12.0.0"
+  }
+}
