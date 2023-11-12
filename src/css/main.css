@@ -1,5 +1,10 @@
 @import "~animate.css/animate.css";
 
+@font-face {
+    font-family: Inter;
+    src: url("../assets/fonts/Inter.ttf");
+}
+
 body
 {
     margin: 0px;
