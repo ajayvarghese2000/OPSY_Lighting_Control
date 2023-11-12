@@ -184,44 +184,34 @@ function showObjectiveLightBeam()
 
 function start_setup()
 {
-    try 
-    {
-        serialPortScan()
+    serialPortScan().then((message) => {
 
-        // Sanity check that the ports exist
-        if (tExists == false || rExists == false)
-        {
-            throw new Error("Ports do not exist")
-        }
-    }
-    catch (error)
-    {
-        console.log(error)
-        alertify.error("Ports do not exist")
-        return;
-    }
+        connectToTransmission()
+        connectToReflection()
+        
+        // Animate out the setup screen
+        var setup = document.getElementById("setupBox");
+        setup.classList.add('animate__animated', 'animate__bounceOutLeft');
+        
+        // Animate in the cassette screen
+        var cassette = document.getElementsByClassName("OpsyNormal");
+        // change visibility to visible
+        cassette[0].style.visibility = "visible";
+        cassette[0].classList.add('animate__animated', 'animate__bounceInRight');
 
-    connectToTransmission()
-    connectToReflection()
-    
-    // Animate out the setup screen
-    var setup = document.getElementById("setupBox");
-    setup.classList.add('animate__animated', 'animate__bounceOutLeft');
-    
-    // Animate in the cassette screen
-    var cassette = document.getElementsByClassName("OpsyNormal");
-    // change visibility to visible
-    cassette[0].style.visibility = "visible";
-    cassette[0].classList.add('animate__animated', 'animate__bounceInRight');
+        // Animate in the reflection button
+        var reflection = document.getElementsByClassName("Reflection_Button");
+        // change visibility to visible
+        reflection[0].style.visibility = "visible";
+        reflection[0].classList.add('animate__animated', 'animate__bounceInLeft');
+        
+        importCassette()
+        setupClickEvents()
+    }).catch((error) => {
+        alertify.error(error)
+    })
 
-    // Animate in the reflection button
-    var reflection = document.getElementsByClassName("Reflection_Button");
-    // change visibility to visible
-    reflection[0].style.visibility = "visible";
-    reflection[0].classList.add('animate__animated', 'animate__bounceInLeft');
     
-    importCassette()
-    setupClickEvents()
 }
 
 function connectToTransmission()
@@ -239,53 +229,62 @@ function connectToReflection()
 
 function serialPortScan()
 {
-    
-    // get the transmission port
-    var transmissionPort = document.getElementsByName("tport")[0].value;
+    return new Promise((resolve, reject) => {
+        // get the transmission port
+        var transmissionPort = document.getElementsByName("tport")[0].value;
 
-    // get the reflection port
-    var reflectionPort = document.getElementsByName("rport")[0].value;
+        // get the reflection port
+        var reflectionPort = document.getElementsByName("rport")[0].value;
 
-    // Set the global variables
-    TransmissionCOM = transmissionPort
-    ReflectionCOM = reflectionPort
+        // Set the global variables
+        TransmissionCOM = transmissionPort
+        ReflectionCOM = reflectionPort
 
-    console.log(TransmissionCOM)
-    console.log(ReflectionCOM)
+        console.log(TransmissionCOM)
+        console.log(ReflectionCOM)
 
-    // Check if the ports specified are valid
-    if (TransmissionCOM == "" || ReflectionCOM == "")
-    {
-        // If not, return
-        console.log("Invalid ports")
-        return;
-    }
-    
-    // Loop through all the ports and check if the ports exist
-    SerialPort.list().then((ports) => {
-        ports.forEach((port) => 
+        // Check if the ports specified are valid
+        if (TransmissionCOM == "" || ReflectionCOM == "" || TransmissionCOM == ReflectionCOM)
         {
-
-            if (port.path == TransmissionCOM)
+            // If not, return
+            console.log("Invalid ports")
+            
+            // reject the promise
+            reject("Invalid ports")
+        }
+        
+        // Loop through all the ports and check if the ports exist
+        SerialPort.list().then((ports) => {
+            ports.forEach((port) => 
             {
-                tExists = true
+
+                if (port.path == TransmissionCOM)
+                {
+                    tExists = true
+                }
+
+                if (port.path == ReflectionCOM)
+                {
+                    rExists = true
+                }
+            })
+
+            // If the ports do not exist throw an error
+            if (tExists == false || rExists == false)
+            {
+                console.log("Ports do not exist")
+
+                // reject the promise
+                reject("Ports do not exist")
             }
-
-            if (port.path == ReflectionCOM)
+            else
             {
-                rExists = true
+                // resolve the promise
+                resolve("Ports exist")
             }
         })
-
-         // If the ports do not exist throw an error
-        if (tExists == false || rExists == false)
-        {
-            console.log("Ports do not exist")
-            throw new Error("Ports do not exist")
-        }
+        
     })
-
-   
 
 }
 
