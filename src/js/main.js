@@ -9,6 +9,7 @@ const createWindow = () => {
       {
         nodeIntegration: true,
         contextIsolation: false,
+        devTools: false,
       }
   })
 
