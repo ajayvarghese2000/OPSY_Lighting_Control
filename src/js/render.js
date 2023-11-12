@@ -1,25 +1,40 @@
-const { SerialPort } = require('serialport')
-const fs = require('fs');
-const alertify = require('alertifyjs');
 
+/* ########## [ Imports ] ########## */
+const { SerialPort } = require('serialport')    // Used to interact with the serial ports
+const fs = require('fs');                       // Used to read files from the file system
+const alertify = require('alertifyjs');         // Used to display alerts
+
+// Set the path to the current directory this file is in
 var currentDirectory = __dirname;
 
+/* ########## [ Globals ] ########## */
+
+// What COM ports the user has selected for the transmission and reflection
 var TransmissionCOM = null
 var ReflectionCOM = null
 
+// The serial port objects for the transmission and reflection
 var transmissionPort = null
 var reflectionPort = null
 
+// If the transmission and reflection ports exist used for error checking
 var tExists = false
 var rExists = false
 
+// The current row that is selected and if the reflection is on or off
 var currentTransmission = null
 var currentReflection = false
 
-
+/***
+ * @brief Turns on the transmission for the selected row
+ * @param row The row that is selected (in the form of a g tag that holds a collection
+ * of paths from the selected SVG file)
+ * @return None
+ * @note This function is called when a row is clicked
+*/
 function TransmissionOn(row) 
 {
-    // If there is a current transmission, switch the colour to white
+    // If there is a current transmission, switch the selected colour off
     if (currentTransmission != null) 
     {
         // Get all the paths in the current transmission
@@ -61,12 +76,20 @@ function TransmissionOn(row)
     // Set the current transmission to the row
     currentTransmission = row;
 
+    // Debug message should output the id of the row which should be the 2^x value
     console.log(row.id)
 
     // Send the transmission command to the COM port
     transmissionPort.write(row.id + ",100")
 }
 
+
+/***
+ * @brief Turns on the reflection
+ * @param None
+ * @return None
+ * @note This function is called when the reflection button is clicked
+*/
 function reflectionToggle()
 {
     // Update the UI
@@ -95,6 +118,15 @@ function reflectionToggle()
 
 }
 
+
+/***
+ * @brief Sets up all the click events for the selected cassette
+ * @param None
+ * @return None
+ * @note This function is called after the COM ports have been verified. It makes 
+ * the cassette visible and sets up all the click events for the cassette to call
+ * the correct functions when clicked.
+*/
 function setupClickEvents() {
     
     // Get the cassette object
@@ -140,6 +172,16 @@ function setupClickEvents() {
     });
 }
 
+/***
+ * @brief Imports the cassette into the html
+ * @param type The type of cassette to import
+ * @return None
+ * @note This function is called after the COM ports have been verified. It will
+ * add the correct cassette svg to the html. Normally this will change depending
+ * on the cassette type. However, for this prototype it will always be the
+ * Jericho cassette.
+ * @todo Add the other cassette types
+*/
 function importCassette(type) 
 {
     // get the element with class OpsyNormal
@@ -155,9 +197,16 @@ function importCassette(type)
     var reflection = document.getElementsByClassName("Reflection_Button");
     reflection[0].innerHTML = fs.readFileSync(`${currentDirectory}/assets/images/reflection.svg`, "utf8");
 
+    // By default hide the reflection light icon will show in the 'on' state turning it off on boot
     hideObjectiveLightBeam()
 }
 
+/***
+ * @brief Hides the objective light beam from the UI
+ * @param None
+ * @return None
+ * @note This function is called when the reflection is turned off
+*/
 function hideObjectiveLightBeam() 
 {
     // get the g element with id Light
@@ -170,6 +219,12 @@ function hideObjectiveLightBeam()
     }
 }
 
+/***
+ * @brief Shows the objective light beam from the UI
+ * @param None
+ * @return None
+ * @note This function is called when the reflection is turned on
+*/
 function showObjectiveLightBeam() 
 {
     // get the g element with id Light
@@ -182,11 +237,19 @@ function showObjectiveLightBeam()
     }
 }
 
-
+/***
+ * @brief Starts the setup process
+ * @param None
+ * @return None
+ * @note This function is called when the start up button is clicked. It will
+ * verify the COM ports and then start the setup process.
+*/
 function start_setup()
 {
+    // Scan the COM ports this returns a promise so it will only continue if the ports are valid
     serialPortScan().then((message) => {
-
+        
+        // Connect to the COM ports
         connectToTransmission()
         connectToReflection()
         
@@ -206,15 +269,24 @@ function start_setup()
         reflection[0].style.visibility = "visible";
         reflection[0].classList.add('animate__animated', 'animate__bounceInLeft');
         
+        // Import the cassette
         importCassette()
+
+        // Setup the click events
         setupClickEvents()
-    }).catch((error) => {
+
+    }).catch((error) => { // If the ports are invalid display an error
         alertify.error(error)
     })
-
-    
 }
 
+/***
+ * @brief Connects to the transmission COM port
+ * @param None
+ * @return None
+ * @note This function is called when the start up button is clicked. It assumes the
+ * COM ports have been verified and will open the COM port with a baud rate of 9600.
+*/
 function connectToTransmission()
 {
     // Connect to the transmission port
@@ -222,43 +294,62 @@ function connectToTransmission()
 
 }
 
+/***
+ * @brief Connects to the reflection COM port
+ * @param None
+ * @return None
+ * @note This function is called when the start up button is clicked. It assumes the
+ * COM ports have been verified and will open the COM port with a baud rate of 9600.
+*/
 function connectToReflection()
 {
     // Connect to the reflection port
     reflectionPort = new SerialPort({path: ReflectionCOM,  baudRate: 9600 })
 }
 
+/***
+ * @brief Scans the COM ports and verifies the ports exist
+ * @param None
+ * @return None
+ * @note This function is called when the start up button is clicked. It will
+ * scan the COM ports and verify the ports exist. It will also verify that the
+ * ports are not the same.
+ * @warning Although this checks that the COM ports exist it does not check if
+ * they are the correct COM ports. The user could select valid COM ports that are
+ * for other devices.
+*/
 function serialPortScan()
 {
     return new Promise((resolve, reject) => {
-        // get the transmission port
+
+        // get the transmission port selected
         var transmissionPort = document.getElementsByName("tport")[0].value;
 
-        // get the reflection port
+        // get the reflection port selected
         var reflectionPort = document.getElementsByName("rport")[0].value;
 
         // Set the global variables
         TransmissionCOM = transmissionPort
         ReflectionCOM = reflectionPort
-
+        
+        // Debug message
         console.log(TransmissionCOM)
         console.log(ReflectionCOM)
 
-        // Check if the ports specified are valid
+        // Check if the ports specified are valid (not the same and not empty)
         if (TransmissionCOM == "" || ReflectionCOM == "" || TransmissionCOM == ReflectionCOM)
         {
-            // If not, return
+            // If not valid throw an error
             console.log("Invalid ports")
             
             // reject the promise
             reject("Invalid ports")
         }
         
-        // Loop through all the ports and check if the ports exist
+        // Loop through all the ports and check if the ports exist on the system
         SerialPort.list().then((ports) => {
             ports.forEach((port) => 
             {
-
                 if (port.path == TransmissionCOM)
                 {
                     tExists = true
@@ -278,15 +369,13 @@ function serialPortScan()
                 // reject the promise
                 reject("Ports do not exist")
             }
-            else
+            else // Both ports exist and are not the same
             {
                 // resolve the promise
                 resolve("Ports exist")
             }
         })
-        
     })
-
 }
 
 // add an even listener for the start button
